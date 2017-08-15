@@ -1,7 +1,6 @@
-Grid for AdminLTE
-=================
-Grid for AdminLTE backend theme asset bundle for Yii 2.0 Framework
-
+Remove button for GridView
+==========================
+Remove button for GridView asset bundle for Yii 2.0 Framework
 Installation
 ------------
 
@@ -10,13 +9,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist igor162/yii2-grid "*"
+php composer.phar require --prefer-dist igor162/yii2-removebutton-widget "*"
 ```
 
 or add
 
 ```
-"igor162/yii2-grid": "*"
+"igor162/yii2-removebutton-widget": "*"
 ```
 
 to the require section of your `composer.json` file.
@@ -28,4 +27,4 @@ Usage
 Once the extension is installed, simply use it in your code by  :
 
 ```php
-<?= \igor162\grid\GridView::widget(); ?>```
+<?= \igor162\RemoveButton\RemoveModal::widget(); ?>```

@@ -1,6 +1,6 @@
 <?php
 
-namespace igor162\JsTreeWidget\widgets;
+namespace igor162\RemoveButton;
 
 use Yii;
 use yii\base\Widget;
