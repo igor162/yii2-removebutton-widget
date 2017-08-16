@@ -28,4 +28,20 @@ Once the extension is installed, simply use it in your code by  :
 
 ```php
 <?= \igor162\RemoveButton\RemoveModal::widget(); ?>
+
+
+<?= \igor162\RemoveButton\RemoveAllButton::widget([
+    'url' => Url::to(
+        [
+            'remove-items',
+            'returnUrl' => Helper::getReturnUrl(),
+        ]
+    ),
+    'gridSelector' => '.grid-view',
+    'modalSelector' => 'delete-category-confirmation',
+    'htmlOptions' => [
+        'class' => 'btn btn-' . GridView::TYPE_DANGER . ' btn-sm',
+    ],
+])
+?>
 ```

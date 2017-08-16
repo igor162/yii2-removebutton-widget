@@ -119,7 +119,7 @@ JS;
                     ],
                     'labelCancel' => [
                         'label' => Yii::t('app', 'Cancel'),
-                        'class' => Modal::STYLE_PRIMARY,
+                        'class' => Modal::STYLE_DEFAULT,
                     ],
                 ],
                 'header' => Yii::t($this->defaultTranslationCategory, Html::encode($this->headerMessage)),
