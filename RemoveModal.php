@@ -4,6 +4,9 @@ namespace igor162\RemoveButton;
 
 use Yii;
 use yii\base\Widget;
+use yii\helpers\Html;
+use igor162\modal\Modal;
+use kartik\icons\Icon;
 use igor162\RemoveButton\RemoveButtonAsset;
 
 /**
@@ -12,40 +15,29 @@ use igor162\RemoveButton\RemoveButtonAsset;
  * Date: 15.08.17
  * Time: 9:31
  *
- * @property string $menuLabelsTranslationCategory
+ * @property string $modelNameId
+ * @property string $bodyNameModel
+ * @property string $bodyTittle
  * @property string $defaultTranslationCategory
  * @property string $headerMessage
- * @property string $buttonRemoveConfig
- * @property string $buttonCancelConfig
+ * @property string $sourcePath
  * @property string $bodyTemplate
-
  */
 class RemoveModal extends Widget
 {
-    /**
-     * Translation category for Yii::t() which will be applied to labels.
-     * If translation is not needed - use false.
-     */
-    public $menuLabelsTranslationCategory = false;
+
+    public $modelNameId = 'delete-category-confirmation';
+    public $bodyNameModel = 'modalContent-delete_data';
+    public $bodyTittle = 'Deleting this category permanently deletes all subcategories and attachments.';
 
     /** @var string Default labels translation category */
     private $defaultTranslationCategory = 'app.remove';
 
     /** @var string Default message for the header*/
-    private $headerMessage;
+    public $headerMessage = 'Warning!';
 
-    /** @var array Default config for the remove button*/
-    public $buttonRemoveConfig = [
-        'class' => 'btn btn-danger',
-        'data-action' => 'confirm',
-        'data-dismiss' => 'modal',
-    ];
-
-    /** @var array Default config for the cancel button*/
-    public $buttonCancelConfig = [
-        'class' => 'btn btn-default',
-        'data-dismiss' => 'modal',
-    ];
+    /** @var string Default config for the cancel button*/
+    private $sourcePath;
 
     public $bodyTemplate = <<< HTML
         <div id="{bodyName}" class="{bodyClass}">
@@ -58,18 +50,19 @@ HTML;
      */
     public function init()
     {
-//        if (false === $this->menuLabelsTranslationCategory) {
-//            $this->menuLabelsTranslationCategory = $this->defaultTranslationCategory;
-//        }
-//        self::registerTranslations();
+        $view = $this->getView();
+        $assetPath = RemoveButtonAsset::register($view);
+        $this->sourcePath = $assetPath->sourcePath;
+        self::registerTranslations();
+
         parent::init();
     }
 
-    public static function registerTranslations()
+    private function registerTranslations()
     {
-        Yii::$app->i18n->translations['jstw*'] = [
+        Yii::$app->i18n->translations[$this->defaultTranslationCategory] = [
             'class' => 'yii\i18n\PhpMessageSource',
-            'basePath' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'messages',
+            'basePath' => $this->sourcePath . DIRECTORY_SEPARATOR . 'messages',
         ];
     }
 
@@ -78,22 +71,68 @@ HTML;
      */
     public function run()
     {
-        RemoveButtonAsset::register($this->getView());
-        parent::run();
+        $this->runJsScript();
+        $this->runModal();
+    }
 
+    /**
+     * Run JavaScript
+     */
+    protected function runJsScript()
+    {
+        $view = $this->getView();
 
-        return $this->render(
-            '_form_remove',
+        $js = <<<JS
+            $('#{$this->modelNameId} [data-action="confirm"]').click(function() {
+        var modal = $(this).parents('.modal');
+        var data =  typeof(modal.attr('data-items')) == "string" && modal.attr('data-items').length > 0
+            ? {'items': modal.attr('data-items').split(',')}
+            : {} ;
+        $.post( modal.attr('data-url'), data, function(val){ return true; });
+        return true;
+    });
+JS;
+        $view->registerJs($js);
+
+    }
+
+    /**
+     * Install modal
+     */
+    protected function runModal()
+    {
+        $content = strtr($this->bodyTemplate, [
+            '{bodyName}' => Html::encode($this->bodyNameModel),
+            '{bodyClass}' => 'margin no-print',
+            '{body}' => Yii::t($this->defaultTranslationCategory, Html::encode($this->bodyTittle)),
+        ]);
+
+        Modal::begin(
             [
-                'modelNameId' => $this->treeConfig,
-                'buttonRemoveMessage' => $this->treeConfig,
-                'buttonRemoveConfig' => $this->multiple,
-                'buttonCancelMessage' => $this->selectIcon,
-                'buttonCancelConfig' => $this->selectText,
-                'headerMessage' => $this->treeConfig,
-                'bodyHTML' => $this->clickToOpen,
+                'typeModal' => Modal::TYPE_DANGER,
+                'id' => $this->modelNameId,
+                'footerButton' => [
+                    'encode' => false,
+                    'labelDelete' => [
+                        'label' => Icon::show('exclamation-triangle', ['class' => 'fa-lg']).Yii::t('app', 'Delete'),
+                        'class' => Modal::STYLE_DANGER,
+                    ],
+                    'labelCancel' => [
+                        'label' => Yii::t('app', 'Cancel'),
+                        'class' => Modal::STYLE_PRIMARY,
+                    ],
+                ],
+                'header' => Yii::t($this->defaultTranslationCategory, Html::encode($this->headerMessage)),
+                'headerIcon' => Icon::show('exclamation-triangle', ['class' => 'fa-lg']),
+                'headerOptions' => ['class' => 'box-header with-border'],
+                'bodyOptions' => ['class' => 'box-body'],
             ]
         );
 
+        echo $content;
+
+        Modal::end();
+
     }
+
 }

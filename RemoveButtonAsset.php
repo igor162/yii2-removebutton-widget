@@ -16,18 +16,12 @@ use yii\web\AssetBundle;
  * @package igor162\grid
  *
  * @property string $sourcePath
- * @property array $js
- * @property array $css
  */
 class RemoveButtonAsset extends AssetBundle
 {
     public function init()
     {
-        $this->sourcePath = __DIR__ . '/js/';
-
-        $this->js = [
-            'RemoveModal.js'
-        ];
+        $this->sourcePath = __DIR__;
         parent::init();
     }
 }
