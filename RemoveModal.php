@@ -114,7 +114,7 @@ JS;
                 'footerButton' => [
                     'encode' => false,
                     'labelDelete' => [
-                        'label' => Icon::show('exclamation-triangle', ['class' => 'fa-lg']).Yii::t('app', 'Delete'),
+                        'label' => Yii::t('app', 'Delete'),
                         'class' => Modal::STYLE_DANGER,
                     ],
                     'labelCancel' => [
