@@ -7,7 +7,6 @@ use yii\base\Widget;
 use yii\helpers\Html;
 use igor162\modal\Modal;
 use kartik\icons\Icon;
-use igor162\RemoveButton\RemoveButtonAsset;
 
 /**
  * Created by PhpStorm.
@@ -20,7 +19,6 @@ use igor162\RemoveButton\RemoveButtonAsset;
  * @property string $bodyTittle
  * @property string $defaultTranslationCategory
  * @property string $headerMessage
- * @property string $sourcePath
  * @property string $bodyTemplate
  */
 class RemoveModal extends Widget
@@ -35,9 +33,6 @@ class RemoveModal extends Widget
 
     /** @var string Default message for the header*/
     public $headerMessage = 'Warning!';
-
-    /** @var string Default config name widget */
-    private $sourcePath = 'yii2-removebutton-widget';
 
     public $bodyTemplate = <<< HTML
         <div id="{bodyName}" class="{bodyClass}">
@@ -58,7 +53,7 @@ HTML;
     {
         Yii::$app->i18n->translations[$this->defaultTranslationCategory] = [
             'class' => 'yii\i18n\PhpMessageSource',
-            'basePath' => dirname(__DIR__) . DIRECTORY_SEPARATOR . $this->sourcePath . DIRECTORY_SEPARATOR . 'messages',
+            'basePath' => '@vendor/igor162/yii2-removebutton-widget/messages',
         ];
     }
 
@@ -74,7 +69,7 @@ HTML;
     /**
      * Run JavaScript
      */
-    protected function runJsScript()
+    private function runJsScript()
     {
         $view = $this->getView();
 
@@ -95,7 +90,7 @@ JS;
     /**
      * Install modal
      */
-    protected function runModal()
+    private function runModal()
     {
         $content = strtr($this->bodyTemplate, [
             '{bodyName}' => Html::encode($this->bodyNameModel),
