@@ -36,8 +36,8 @@ class RemoveModal extends Widget
     /** @var string Default message for the header*/
     public $headerMessage = 'Warning!';
 
-    /** @var string Default config for the cancel button*/
-    private $sourcePath;
+    /** @var string Default config name widget */
+    private $sourcePath = 'yii2-removebutton-widget';
 
     public $bodyTemplate = <<< HTML
         <div id="{bodyName}" class="{bodyClass}">
@@ -50,11 +50,7 @@ HTML;
      */
     public function init()
     {
-        $view = $this->getView();
-        $assetPath = RemoveButtonAsset::register($view);
-        $this->sourcePath = $assetPath->sourcePath;
         self::registerTranslations();
-
         parent::init();
     }
 
@@ -62,7 +58,7 @@ HTML;
     {
         Yii::$app->i18n->translations[$this->defaultTranslationCategory] = [
             'class' => 'yii\i18n\PhpMessageSource',
-            'basePath' => $this->sourcePath . DIRECTORY_SEPARATOR . 'messages',
+            'basePath' => dirname(__DIR__) . DIRECTORY_SEPARATOR . $this->sourcePath . DIRECTORY_SEPARATOR . 'messages',
         ];
     }
 
